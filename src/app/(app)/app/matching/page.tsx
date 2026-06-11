@@ -1,5 +1,5 @@
 import { createClient } from '@/lib/supabase/server';
-import { MatchingClient } from './MatchingClient'; // refresh-cache
+import { MatchingClient } from './MatchingClient';
 
 export default async function MatchingPage() {
   const supabase = await createClient();

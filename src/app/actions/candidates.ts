@@ -290,6 +290,39 @@ export async function getResumeUrl(fileName: string) {
   return data.publicUrl;
 }
 
+export async function cancelApplication(candidateId: string) {
+  const supabase = await createClient();
+  
+  // Verify it belongs to current user
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { success: false, error: 'No autorizado' };
+
+  // Note: RLS should enforce the user can only update their own candidate record,
+  // but we enforce an email check just in case
+  const { data: candidate } = await supabase
+    .from('candidates')
+    .select('email')
+    .eq('id', candidateId)
+    .single();
+    
+  if (!candidate || candidate.email !== user.email) {
+    return { success: false, error: 'No autorizado para cancelar esta postulación' };
+  }
+
+  const { error } = await supabase
+    .from('candidates')
+    .update({ status: 'withdrawn' })
+    .eq('id', candidateId);
+
+  if (error) {
+    return { success: false, error: error.message };
+  }
+
+  revalidatePath('/portal');
+  revalidatePath('/app/dashboard');
+  return { success: true };
+}
+
 export async function seedDatabase() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
