@@ -1,26 +1,56 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
+@theme {
+  --color-cyan-main: #00d2ff;
+  --color-salmon-main: #ff6b6b;
+  
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
+@layer utilities {
+  .glass {
+    background: rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+  }
+  .dark .glass {
+    background: rgba(15, 23, 42, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  }
+  .glass-card {
+    border-radius: 1rem;
+    transition: all 0.3s ease;
+  }
+  .glass-card:hover {
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.12);
+    transform: translateY(-2px);
+  }
+  .dark .glass-card:hover {
+    box-shadow: 0 8px 32px 0 rgba(0, 210, 255, 0.1);
+  }
+}
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0f19; /* Very dark blue/grey for contrast */
+    --foreground: #f8fafc;
   }
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  min-height: 100vh;
 }
