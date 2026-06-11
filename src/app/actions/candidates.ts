@@ -208,21 +208,12 @@ export async function applyToVacancy(formData: FormData) {
   let cvText = "No se pudo extraer texto del CV.";
   try {
     const arrayBuffer = await cvFile.arrayBuffer();
-    const uint8Array = new Uint8Array(arrayBuffer);
+    const buffer = Buffer.from(arrayBuffer);
     
-    // Polyfill DOMMatrix for pdf.js running in Node/Next.js
-    if (typeof global.DOMMatrix === 'undefined') {
-      (global as any).DOMMatrix = class DOMMatrix {
-        constructor() {}
-      };
-    }
-
     // Import dynamically so it works in Server Actions
-    const { PDFParse } = await import('pdf-parse');
-    const parser = new PDFParse(uint8Array);
-    await (parser as any).load();
-    const result = await (parser as any).getText();
-    cvText = result.text;
+    const pdf = (await import('pdf-parse')).default;
+    const data = await pdf(buffer);
+    cvText = data.text;
   } catch (err) {
     console.error('Error parsing PDF:', err);
   }
